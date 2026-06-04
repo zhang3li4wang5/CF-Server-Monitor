@@ -1,23 +1,23 @@
 <template>
   <div>
-    <div v-if="!isLoggedIn" id="login-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center;">
-      <div style="background:var(--bg-secondary);border:1px solid var(--border-active);border-radius:6px;padding:32px;width:420px;max-width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-        <div style="text-align:center;margin-bottom:24px;">
-          <div style="font-size:40px;margin-bottom:12px;">🔐</div>
-          <h2 style="color:var(--accent-green);margin:0;font-size:18px;text-transform:uppercase;letter-spacing:1px;">{{ trans.adminLogin }}</h2>
-          <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">{{ trans.enterCredentials }}</p>
+    <div v-if="!isLoggedIn" id="login-overlay" class="login-overlay">
+      <div class="login-container">
+        <div class="login-header">
+          <div class="login-icon">🔐</div>
+          <h2 class="login-title">{{ trans.adminLogin }}</h2>
+          <p class="login-subtitle">{{ trans.enterCredentials }}</p>
         </div>
         <form @submit.prevent="handleLogin">
-          <div style="margin-bottom:16px;">
-            <label style="display:block;color:var(--text-muted);font-size:11px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">{{ trans.username }}</label>
-            <input type="text" v-model="loginForm.username" required style="width:100%;padding:10px 12px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:4px;color:var(--text-primary);font-family:var(--terminal-font);font-size:13px;" placeholder="admin">
+          <div class="login-form-group">
+            <label class="login-label">{{ trans.username }}</label>
+            <input type="text" v-model="loginForm.username" required class="login-input" placeholder="admin">
           </div>
-          <div style="margin-bottom:20px;">
-            <label style="display:block;color:var(--text-muted);font-size:11px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">{{ trans.password }}</label>
-            <input type="password" v-model="loginForm.password" required style="width:100%;padding:10px 12px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:4px;color:var(--text-primary);font-family:var(--terminal-font);font-size:13px;" placeholder="••••••••">
+          <div class="login-form-group last">
+            <label class="login-label">{{ trans.password }}</label>
+            <input type="password" v-model="loginForm.password" required class="login-input" placeholder="••••••••">
           </div>
-          <div v-if="loginError" id="login-error" style="padding:10px;background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.3);border-radius:4px;color:var(--accent-red);font-size:12px;margin-bottom:16px;text-align:center;">{{ loginError }}</div>
-          <button type="submit" style="width:100%;padding:12px;background:var(--accent-green);border:1px solid var(--accent-green);border-radius:4px;color:#000;font-family:var(--terminal-font);font-size:14px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s;">{{ trans.login }}</button>
+          <div v-if="loginError" id="login-error" class="login-error">{{ loginError }}</div>
+          <button type="submit" class="login-btn">{{ trans.login }}</button>
         </form>
       </div>
     </div>
@@ -99,7 +99,7 @@
             <table class="terminal-table">
               <thead>
                 <tr>
-                  <th style="width:35px; text-align:center;">↕️</th>
+                  <th class="table-center-cell" style="width:35px;">↕️</th>
                   <th style="width:30px;"><input type="checkbox" id="select-all" @change="handleSelectAll" style="accent-color: var(--accent-green);"></th>
                   <th>{{ trans.hostname.toUpperCase() }}</th>
                   <th>{{ trans.group.toUpperCase() }}</th>
@@ -121,8 +121,8 @@
                   class="server-row"
                   :data-server-id="server.id"
                 >
-                  <td class="drag-handle" style="text-align:center; cursor:move; user-select:none;" :title="trans.dragSort" draggable="true" @dragstart="handleDragStart" @dragover.prevent @drop="handleDrop($event, server.id)">⋮⋮</td>
-                  <td style="text-align:center;"><input type="checkbox" class="server-checkbox" :value="server.id" v-model="selectedServers"></td>
+                  <td class="drag-handle table-center-cell" :title="trans.dragSort" draggable="true" @dragstart="handleDragStart" @dragover.prevent @drop="handleDrop($event, server.id)">⋮⋮</td>
+                  <td class="table-center-cell"><input type="checkbox" class="server-checkbox" :value="server.id" v-model="selectedServers"></td>
                   <td>
                     <div style="display:flex; align-items:center; gap:8px;">
                       <span v-if="server.country && server.country !== 'xx'">
@@ -144,7 +144,7 @@
                     <div class="action-group">
                       <div class="cmd-input-wrapper" :class="{ copied: copiedServerId === server.id }">
                         <span class="cmd-prompt">$</span>
-                        <input type="text" readonly :value="getInstallCommand(server.id)" class="cmd-input">
+                        <input @click="copyCmd(server.id)" type="text" readonly :value="getInstallCommand(server.id)" class="cmd-input">
                       </div>
                       <div class="action-btns">
                         <button @click="copyCmd(server.id)" class="btn btn-icon btn-green" :title="trans.copy">{{ copiedServerId === server.id ? '✅' : '📋' }}</button>
@@ -371,6 +371,48 @@
         </div>
       </div>
 
+      <div id="copyModal" class="modal-overlay" :style="{ display: showCopyModal ? 'block' : 'none' }">
+        <div class="modal-dialog">
+          <div class="modal-header">
+            <div class="modal-title">$ curl -sL {{ API_BASE }}/install.sh | bash -s install</div>
+            <button class="modal-close" @click="closeCopyModal">✕</button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{{ trans.reportInterval }}</label>
+            <select v-model="reportInterval" class="form-select">
+              <option :value="60">60</option>
+              <option :value="120">120</option>
+              <option :value="180">180</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{{ trans.pingMode }}</label>
+            <select v-model="pingMode" class="form-select">
+              <option value="http">HTTP</option>
+              <option value="tcp">TCP</option>
+            </select>
+            <p style="color: var(--text-muted); margin-top: 8px;">
+              <span style="color: var(--accent-yellow);">[i]</span> {{ trans.tcpWarning }}
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{{ trans.installCommand }}</label>
+            <div class="cmd-input-wrapper" :class="{ copied: copiedCmd }">
+              <span class="cmd-prompt">$</span>
+              <input type="text" readonly :value="getCustomInstallCommand()" class="cmd-input" style="flex: 1;">
+            </div>
+          </div>
+
+          <div class="modal-footer" style="justify-content: flex-end;">
+            <button @click="copyCustomCmd" class="btn btn-primary">{{ copiedCmd ? '✅ ' + trans.copied : '📋 ' + trans.copy }}</button>
+            <button @click="closeCopyModal" class="btn">{{ trans.close }}</button>
+          </div>
+        </div>
+      </div>
+
       <div id="dbModal" class="modal-overlay" :style="{ display: showDbModal ? 'block' : 'none' }">
         <div class="modal-dialog">
           <div class="modal-header">
@@ -499,6 +541,12 @@ const showDbModal = ref(false)
 const dbOperation = ref('')
 const dbLoading = ref(false)
 const dbResult = ref(null)
+
+const showCopyModal = ref(false)
+const copyServerId = ref('')
+const reportInterval = ref(60)
+const pingMode = ref('http')
+const copiedCmd = ref(false)
 
 const handleLogin = async () => {
     loginError.value = ''
@@ -663,18 +711,35 @@ const getUninstallCommand = () => {
   return `curl -sL ${API_BASE}/install.sh | bash -s uninstall`
 }
 
-const copyCmd = async (serverId) => {
-  const cmd = getInstallCommand(serverId)
+const copyCmd = (serverId) => {
+  copyServerId.value = serverId
+  reportInterval.value = 60
+  pingMode.value = 'http'
+  copiedCmd.value = false
+  showCopyModal.value = true
+}
+
+const getCustomInstallCommand = () => {
+  const HOST = API_BASE
+  return `curl -sL ${HOST}/install.sh | bash -s install ${copyServerId.value} ${apiSecret.value} ${HOST}/update ${reportInterval.value} ${pingMode.value}`
+}
+
+const copyCustomCmd = async () => {
+  const cmd = getCustomInstallCommand()
   try {
     await navigator.clipboard.writeText(cmd)
   } catch (e) {
     document.execCommand('copy')
   }
 
-  copiedServerId.value = serverId
+  copiedCmd.value = true
   setTimeout(() => {
-    copiedServerId.value = null
+    copiedCmd.value = false
   }, 1500)
+}
+
+const closeCopyModal = () => {
+  showCopyModal.value = false
 }
 
 const copyUninstallCmd = async () => {

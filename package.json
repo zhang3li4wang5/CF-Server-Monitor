@@ -1,7 +1,7 @@
 {
-  "name": "cf-server-monitor-pro",
+  "name": "cf-server-monitor",
   "version": "2.3.0",
-  "description": "Cloudflare Workers Server Monitor Pro - 多服务器监控探针",
+  "description": "Cloudflare Workers Server Monitor - 多服务器监控探针",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",

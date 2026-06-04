@@ -48,26 +48,26 @@
         <div class="stat-label">{{ trans.totalServers }}</div>
         <div class="stat-main-value">{{ stats.total }}</div>
         <div class="stat-sub-info">
-          <span style="color:var(--accent-green);">{{ trans.online }}:{{ stats.online }}</span> |
-          <span style="color:var(--accent-red);">{{ trans.offline }}:{{ stats.offline }}</span>
+          <span class="stat-online-color">{{ trans.online }}:{{ stats.online }}</span> |
+          <span class="stat-offline-color">{{ trans.offline }}:{{ stats.offline }}</span>
         </div>
       </div>
       <div class="stat-item">
         <div class="stat-label">{{ trans.totalTraffic }}</div>
-        <div class="stat-main-value" style="font-size:16px;">{{ formatBytes(stats.globalNetRx) }} ↓ | ↑ {{ formatBytes(stats.globalNetTx) }}</div>
+        <div class="stat-main-value stat-main-value-sm">{{ formatBytes(stats.globalNetRx) }} ↓ | ↑ {{ formatBytes(stats.globalNetTx) }}</div>
       </div>
       <div class="stat-item">
         <div class="stat-label">{{ trans.realtimeSpeed }}</div>
-        <div class="stat-main-value" style="font-size:16px;">
-          <span style="color:var(--accent-green);">↓ {{ formatBytes(stats.globalSpeedIn) }}/s</span> |
-          <span style="color:var(--accent-blue);">↑ {{ formatBytes(stats.globalSpeedOut) }}/s</span>
+        <div class="stat-main-value stat-main-value-sm">
+          <span class="stat-net-down-color">↓ {{ formatBytes(stats.globalSpeedIn) }}/s</span> |
+          <span class="stat-net-up-color">↑ {{ formatBytes(stats.globalSpeedOut) }}/s</span>
         </div>
       </div>
     </div>
 
     <div id="view-card" class="view-panel" :class="{ active: currentView === 'card' }">
       <div v-if="groupedServers.length === 0" class="empty-state">
-        [!] {{ trans.noServer }}，请在 <a href="/admin" style="color: var(--accent-cyan);">{{ trans.backToAdmin }}</a> 中添加
+        [!] {{ trans.noServer }}，请在 <a href="/admin" class="admin-link-color">{{ trans.backToAdmin }}</a> 中添加
       </div>
       <div v-else>
         <div v-for="group in groupedServers" :key="group.name" class="group-section">
@@ -107,22 +107,22 @@
           </thead>
           <tbody>
             <tr v-if="filteredServers.length === 0">
-              <td colspan="12" style="text-align:center; color:var(--text-muted);">[*] {{ trans.noData }}</td>
+              <td colspan="12" class="table-empty-state">[*] {{ trans.noData }}</td>
             </tr>
             <tr 
               v-for="server in filteredServers" 
               :key="server.id"
               @click="goToServer(server.id)"
-              style="cursor:pointer;"
+              class="table-cursor-pointer"
               :data-country="(server.country || 'xx').toLowerCase()"
             >
-              <td style="text-align:center;">
-                <div class="status-indicator" :style="{ background: getStatusColor(server), display: 'inline-block', margin: '0', width: '8px', height: '8px' }"></div>
+              <td class="table-center-cell">
+                <div class="status-indicator table-status-indicator-inline" :style="{ background: getStatusColor(server) }"></div>
               </td>
               <td><b>{{ server.name }}</b></td>
               <td>
                 <span v-if="server.country && server.country !== 'xx'">
-                  <img :src="'https://flagcdn.com/24x18/' + server.country.toLowerCase() + '.png'" :alt="server.country" style="vertical-align: middle; border-radius: 2px; filter: brightness(0.9);">
+                  <img :src="'https://flagcdn.com/24x18/' + server.country.toLowerCase() + '.png'" :alt="server.country" class="flag-img">
                 </span>
                 <span v-else>🏳️</span>
                 {{ (server.country || 'XX').toUpperCase() }}
@@ -130,9 +130,9 @@
               <td><span class="os-label">{{ server.os || 'N/A' }} / {{ server.arch || 'N/A' }} </span></td>
               <td>
                 <div class="table-stat">
-                  <div class="stat-bar-container" style="width:60px;">
-                    <div class="stat-bar-fill" :style="{ width: (parseFloat(server.cpu) || 0) + '%', background: 'var(--accent-cyan)' }"></div>
-                  </div>
+                  <div class="stat-bar-container stat-bar-small">
+                  <div class="stat-bar-fill" :style="{ width: (parseFloat(server.cpu) || 0) + '%', background: 'var(--accent-cyan)' }"></div>
+                </div>
                   <span>{{ (parseFloat(server.cpu) || 0).toFixed(1) }}%</span>
                 </div>
               </td>
@@ -346,6 +346,19 @@ const iso2To3 = {
 
 let markersLayer, geoJsonLayer, currentMapDataStr = ""
 
+// 获取当前主题的颜色
+const getThemeColors = () => {
+  const isLight = document.body.classList.contains('light')
+  return {
+    bgPrimary: isLight ? '#0a0e14' : '#0a0e14',
+    bgSecondary: isLight ? '#e8e8e0' : '#12171f',
+    borderColor: isLight ? '#1e2a3a' : '#1e2a3a',
+    accentGreen: isLight ? '#00d4aa' : '#00d4aa',
+    colorBlack: isLight ? '#000' : '#000',
+    colorWhite: isLight ? '#fff' : '#fff'
+  }
+}
+
 const drawMarkers = () => {
   if (!window.myMap || !window.worldGeoJson) return
   
@@ -357,6 +370,7 @@ const drawMarkers = () => {
   if (markersLayer) markersLayer.clearLayers()
   else markersLayer = window.L.layerGroup().addTo(window.myMap)
   
+  const colors = getThemeColors()
   const activeIso3 = {}
   for (const code in countryStats.value) {
     if (iso2To3[code.toUpperCase()]) activeIso3[iso2To3[code.toUpperCase()]] = true
@@ -366,10 +380,10 @@ const drawMarkers = () => {
     style: function(feature) {
       const isActive = activeIso3[feature.id]
       return {
-        fillColor: isActive ? '#00d4aa' : '#1e2a3a',
+        fillColor: isActive ? colors.accentGreen : colors.borderColor,
         weight: 1,
         opacity: 0.8,
-        color: '#0a0e14',
+        color: colors.bgPrimary,
         fillOpacity: isActive ? 0.4 : 0.2
       }
     }
@@ -380,7 +394,7 @@ const drawMarkers = () => {
     if (countryCoords[upperCode]) {
       const icon = window.L.divIcon({
         className: 'custom-map-marker',
-        html: `<div style="background:#00d4aa; color:#000; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; border:2px solid #0a0e14; box-shadow:0 0 10px rgba(0,212,170,0.5); font-family:JetBrains Mono,monospace;">${count}</div>`,
+        html: `<div style="background:${colors.accentGreen}; color:${colors.colorBlack}; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; border:2px solid ${colors.bgPrimary}; box-shadow:0 0 10px ${colors.accentGreen}80; font-family:JetBrains Mono,monospace;">${count}</div>`,
         iconSize: [22,22]
       })
       window.L.marker(countryCoords[upperCode], {icon: icon}).addTo(markersLayer)
@@ -393,14 +407,32 @@ const goToServer = (id) => {
 }
 
 let refreshInterval = null
+let themeObserver = null
 
 onMounted(() => {
-  currentView.value = localStorage.getItem('monitor_preferred_view') || 'card'
+  const savedView = localStorage.getItem('monitor_preferred_view') || 'card'
+  currentView.value = savedView
   refreshData()
   refreshInterval = setInterval(refreshData, 60000)
+  
+  if (savedView === 'map') {
+    switchView('map')
+  }
+  
+  // 监听主题切换，重新绘制 map
+  themeObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'class' && currentView.value === 'map') {
+        currentMapDataStr = '' // 清空缓存，强制重绘
+        drawMarkers()
+      }
+    })
+  })
+  themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] })
 })
 
 onUnmounted(() => {
   if (refreshInterval) clearInterval(refreshInterval)
+  if (themeObserver) themeObserver.disconnect()
 })
 </script>

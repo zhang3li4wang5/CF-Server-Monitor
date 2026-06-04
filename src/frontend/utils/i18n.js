@@ -165,7 +165,12 @@ const translations = reactive({
     operationSuccess: 'Operation successful',
     operationFailed: 'Operation failed',
     upgrading: 'Upgrading...',
-    rebuilding: 'Rebuilding...'
+    rebuilding: 'Rebuilding...',
+    reportInterval: 'Report Interval (seconds)',
+    pingMode: 'Ping Mode',
+    tcpWarning: 'If TCP mode is not compatible, please switch to HTTP mode',
+    copied: 'Copied!',
+    close: 'Close'
   },
   zh: {
     theme: '主题',
@@ -331,7 +336,12 @@ const translations = reactive({
     operationSuccess: '操作成功',
     operationFailed: '操作失败',
     upgrading: '升级中...',
-    rebuilding: '重建中...'
+    rebuilding: '重建中...',
+    reportInterval: '上报间隔（秒）',
+    pingMode: 'Ping方式',
+    tcpWarning: '如果TCP模式不兼容，请切换到HTTP模式',
+    copied: '已复制！',
+    close: '关闭'
   }
 })
 

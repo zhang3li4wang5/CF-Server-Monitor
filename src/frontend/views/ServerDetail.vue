@@ -25,7 +25,7 @@
         <div class="host-name">
           <span class="prompt">root@</span>
           <span v-if="server.country && server.country !== 'xx'">
-            <img :src="'https://flagcdn.com/24x18/' + server.country.toLowerCase() + '.png'" :alt="server.country" style="vertical-align: middle; margin-right: 6px; border-radius: 2px; filter: brightness(0.9);">
+            <img :src="'https://flagcdn.com/24x18/' + server.country.toLowerCase() + '.png'" :alt="server.country" class="flag-img" style="margin-right:6px;">
           </span>
           <span v-else>🏳️</span>
           <span>{{ server.name || 'Loading...' }}</span>
@@ -51,7 +51,7 @@
         </div>
         <div class="sysinfo-item">
           <span class="sysinfo-label">🔧 {{ trans.cpuInfo }}</span>
-          <span class="sysinfo-value" style="font-size:11px;">{{ server.cpu_info || 'N/A' }}</span>
+          <span class="sysinfo-value sysinfo-small">{{ server.cpu_info || 'N/A' }}</span>
         </div>
         <div class="sysinfo-item">
           <span class="sysinfo-label">⚙️ {{ trans.cpuCores }}</span>
@@ -71,7 +71,7 @@
         </div>
         <div class="sysinfo-item">
           <span class="sysinfo-label">🕐 {{ trans.bootTime }}</span>
-          <span class="sysinfo-value" style="font-size:11px;">{{ formatBootTime(server.boot_time) }}</span>
+          <span class="sysinfo-value sysinfo-small">{{ formatBootTime(server.boot_time) }}</span>
         </div>
         <div class="sysinfo-item">
           <span class="sysinfo-label">🔽 {{ trans.trafficIn }}</span>
@@ -108,10 +108,10 @@
             <span class="chart-title-icon">▸</span>
             {{ trans.loadAvgMonitor }}
           </span>
-          <div style="display: flex; gap: 20px; font-size: 11px; font-weight: 500;">
-            <span style="color: var(--accent-green);">{{ trans.load1m }} <b>{{ (parseLoadAvg(server.load_avg)[0] || 0).toFixed(2) }}</b></span>
-            <span style="color: var(--accent-yellow);">{{ trans.load5m }} <b>{{ (parseLoadAvg(server.load_avg)[1] || 0).toFixed(2) }}</b></span>
-            <span style="color: var(--accent-blue);">{{ trans.load15m }} <b>{{ (parseLoadAvg(server.load_avg)[2] || 0).toFixed(2) }}</b></span>
+          <div class="load-avg-row">
+            <span class="load-1m">{{ trans.load1m }} <b>{{ (parseLoadAvg(server.load_avg)[0] || 0).toFixed(2) }}</b></span>
+            <span class="load-5m">{{ trans.load5m }} <b>{{ (parseLoadAvg(server.load_avg)[1] || 0).toFixed(2) }}</b></span>
+            <span class="load-15m">{{ trans.load15m }} <b>{{ (parseLoadAvg(server.load_avg)[2] || 0).toFixed(2) }}</b></span>
           </div>
         </div>
         <div class="chart-body">
@@ -187,8 +187,8 @@
             {{ trans.connections }}
           </span>
           <div class="net-indicator">
-            <span style="color: var(--accent-purple);">TCP <b>{{ server.tcp_conn || '0' }}</b></span>
-            <span style="color: var(--accent-pink);">UDP <b>{{ server.udp_conn || '0' }}</b></span>
+            <span class="conn-tcp">TCP <b>{{ server.tcp_conn || '0' }}</b></span>
+            <span class="conn-udp">UDP <b>{{ server.udp_conn || '0' }}</b></span>
           </div>
         </div>
         <div class="chart-body">
@@ -202,11 +202,11 @@
             <span class="chart-title-icon">▸</span>
             {{ trans.latencyMonitor }}
           </span>
-          <div style="display: flex; gap: 20px; font-size: 11px; font-weight: 500;">
-            <span style="color: var(--accent-green);">{{ trans.pingCt }} <b>{{ server.ping_ct || '0' }}ms</b></span>
-            <span style="color: var(--accent-yellow);">{{ trans.pingCu }} <b>{{ server.ping_cu || '0' }}ms</b></span>
-            <span style="color: var(--accent-blue);">{{ trans.pingCm }} <b>{{ server.ping_cm || '0' }}ms</b></span>
-            <span style="color: var(--accent-purple);">{{ trans.pingBd }} <b>{{ server.ping_bd || '0' }}ms</b></span>
+          <div class="ping-indicator">
+            <span class="ping-ct">{{ trans.pingCt }} <b>{{ server.ping_ct || '0' }}ms</b></span>
+            <span class="ping-cu">{{ trans.pingCu }} <b>{{ server.ping_cu || '0' }}ms</b></span>
+            <span class="ping-cm">{{ trans.pingCm }} <b>{{ server.ping_cm || '0' }}ms</b></span>
+            <span class="ping-bd">{{ trans.pingBd }} <b>{{ server.ping_bd || '0' }}ms</b></span>
           </div>
         </div>
         <div class="chart-body">
@@ -233,12 +233,12 @@
           <div class="modal-title">$ sudo login</div>
           <button class="modal-close" @click="showLoginModal = false">✕</button>
         </div>
-        <div class="modal-body" style="padding: 16px 0;">
-          <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">{{ trans.loginRequired }}</p>
+        <div class="modal-body-content">
+          <p class="modal-body-text">{{ trans.loginRequired }}</p>
         </div>
         <div class="modal-footer">
-          <button @click="showLoginModal = false" class="btn" style="flex: 1;">{{ trans.cancel }}</button>
-          <button @click="goToLogin" class="btn btn-blue" style="flex: 1;">{{ trans.login }}</button>
+          <button @click="showLoginModal = false" class="btn modal-btn-full">{{ trans.cancel }}</button>
+          <button @click="goToLogin" class="btn btn-blue modal-btn-full">{{ trans.login }}</button>
         </div>
       </div>
     </div>

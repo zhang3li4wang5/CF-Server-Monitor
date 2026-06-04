@@ -23,7 +23,7 @@ SCRIPT_FILE="/usr/local/bin/${SERVICE_NAME}.sh"
 
 print_banner() {
     echo -e "${CYAN}╔══════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║     CF-Server-Monitor-Pro 探针管理工具 (Enterprise) ║${NC}"
+    echo -e "${CYAN}║     CF-Server-Monitor 探针管理工具 (Enterprise) ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════╝${NC}"
 }
 
@@ -190,21 +190,10 @@ get_ping() {
 }
 
 # 静态测试节点定义
-CT_NODES=("gd-ct-dualstack.ip.zstaticcdn.com")
-CU_NODES=("gd-cu-dualstack.ip.zstaticcdn.com")
-CM_NODES=("gd-cm-dualstack.ip.zstaticcdn.com")
-
-pick_node() {
-    local nodes=("$@")
-    local count=${#nodes[@]}
-
-    if [ "${count}" -eq 0 ]; then
-        echo ""
-        return
-    fi
-
-    echo "${nodes[$((RANDOM % count))]}"
-}
+CT_NODE="gd-ct-dualstack.ip.zstaticcdn.com"
+CU_NODE="gd-cu-dualstack.ip.zstaticcdn.com"
+CM_NODE="gd-cm-dualstack.ip.zstaticcdn.com"
+BD_NODE="lf3-ips.zstaticcdn.com"
 
 # ==============================================================================
 # 高并发/无竞态后台网络 Worker 协程
@@ -227,10 +216,10 @@ run_network_worker() {
         
         # 30秒检测一次网络延迟
         if [ $((now - last_ping)) -ge 30 ] || [ "$last_ping" -eq 0 ]; then
-            get_ping "$(pick_node "${CT_NODES[@]}")" > /dev/shm/.cf_ping_ct.tmp && mv /dev/shm/.cf_ping_ct.tmp /dev/shm/.cf_ping_ct || true
-            get_ping "$(pick_node "${CU_NODES[@]}")" > /dev/shm/.cf_ping_cu.tmp && mv /dev/shm/.cf_ping_cu.tmp /dev/shm/.cf_ping_cu || true
-            get_ping "$(pick_node "${CM_NODES[@]}")" > /dev/shm/.cf_ping_cm.tmp && mv /dev/shm/.cf_ping_cm.tmp /dev/shm/.cf_ping_cm || true
-            get_ping "lf3-ips.zstaticcdn.com" > /dev/shm/.cf_ping_bd.tmp && mv /dev/shm/.cf_ping_bd.tmp /dev/shm/.cf_ping_bd || true
+            get_ping "$CT_NODE" > /dev/shm/.cf_ping_ct.tmp && mv /dev/shm/.cf_ping_ct.tmp /dev/shm/.cf_ping_ct || true
+            get_ping "$CU_NODE" > /dev/shm/.cf_ping_cu.tmp && mv /dev/shm/.cf_ping_cu.tmp /dev/shm/.cf_ping_cu || true
+            get_ping "$CM_NODE" > /dev/shm/.cf_ping_cm.tmp && mv /dev/shm/.cf_ping_cm.tmp /dev/shm/.cf_ping_cm || true
+            get_ping "$BD_NODE" > /dev/shm/.cf_ping_bd.tmp && mv /dev/shm/.cf_ping_bd.tmp /dev/shm/.cf_ping_bd || true
             last_ping="$now"
         fi
         sleep 5
@@ -443,8 +432,8 @@ install_probe() {
     SERVER_ID=${1:-""}
     SECRET=${2:-""}
     WORKER_URL=${3:-""}
-    REPORT_INTERVAL=${4:-60}
-    PING_TYPE=${5:-http}
+    REPORT_INTERVAL=${4:-}
+    PING_TYPE=${5:-}
 
     if [ -z "$SERVER_ID" ] || [ -z "$SECRET" ] || [ -z "$WORKER_URL" ]; then
         echo -e "${RED}错误: 运行所需的入参不完整。${NC}\n"
@@ -453,6 +442,9 @@ install_probe() {
         echo "  PING_TYPE: http (默认) | tcp"
         exit 1
     fi
+
+    REPORT_INTERVAL=${REPORT_INTERVAL:-60}
+    PING_TYPE=${PING_TYPE:-http}
 
     print_banner
     check_root
@@ -464,7 +456,7 @@ install_probe() {
     start_service
 
     echo -e "\n${GREEN}============================================="
-    echo -e "         CF-Server-Monitor-Pro 安装成功"
+    echo -e "         CF-Server-Monitor 安装成功"
     echo -e "=============================================${NC}"
     echo -e "  服务状态 : ${GREEN}Active (Running)${NC}"
     echo -e "  管理指令 :"

@@ -1,4 +1,4 @@
-# CF-Server-Monitor-Pro
+# CF-Server-Monitor
 
 **版本：V2.3**
 
@@ -140,8 +140,8 @@ CF-Server-Monitor/
 
 ```bash
 # 克隆你 Fork 的仓库
-git clone https://github.com/你的用户名/CF-Server-Monitor-Pro.git
-cd CF-Server-Monitor-Pro
+git clone https://github.com/你的用户名/CF-Server-Monitor.git
+cd CF-Server-Monitor
 
 # 可选：修改配置后提交
 git add .
@@ -211,6 +211,22 @@ curl -sL https://你的项目.你的子域.workers.dev/install.sh | bash -s inst
 ```bash
 curl -sL https://你的项目.你的子域.workers.dev/install.sh | bash -s uninstall
 ```
+
+### Windows 系统安装
+
+对于 Windows 系统，使用 Python 脚本安装探针：
+
+#### 安装依赖
+`pip install psutil pystray pillow`
+
+#### 下载探针脚本
+[cf-server-monitor.py](public/cf-server-monitor.py)
+
+#### 运行探针（建议使用管理员权限）
+`python cf-server-monitor.py`
+
+> **注意**：详细配置说明请参考 [GitHub Issue #9](https://github.com/huilang-me/CF-Server-Monitor/issues/9#issuecomment-4620016171)
+
 
 ## 📊 使用说明
 
@@ -293,6 +309,20 @@ curl -sL https://你的项目.你的子域.workers.dev/install.sh | bash -s unin
 1. 创建群机器人，获取 Webhook URL
 2. 填入 Bot Token 字段
 3. Chat ID 留空
+
+## 📸 界面预览
+![image](https://github.com/user-attachments/assets/0527f847-4631-47ad-8315-3f80ebba42d2)
+![image](https://github.com/user-attachments/assets/a9c1aefd-42f7-4805-aa42-bbe9e58aed59)
+![image](https://github.com/user-attachments/assets/527bcf04-3124-4f1c-b052-451bccae961d)
+![image](https://github.com/user-attachments/assets/ac6f6fbb-b9fb-45cd-93e5-ca08bbad9ecb)
+![image](https://github.com/user-attachments/assets/b5436816-54bd-4512-a65c-bf963fd4874c)
+![image](https://github.com/user-attachments/assets/ba0d3605-ef64-4be1-884b-9506f20277a8)
+![image](https://github.com/user-attachments/assets/197767cc-028b-4ec1-b41f-5cadc2b25629)
+
+浅色风格
+![image](https://github.com/user-attachments/assets/3a7f3204-0a68-4f59-9822-f7f1b5479822)
+![image](https://github.com/user-attachments/assets/e100d984-3165-4f38-948a-625249b4600a)
+![image](https://github.com/user-attachments/assets/7d266ff3-0db7-477b-8029-c76e42298002)
 
 ## 🛠️ 本地开发
 
