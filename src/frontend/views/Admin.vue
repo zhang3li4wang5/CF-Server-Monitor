@@ -173,7 +173,7 @@
 
         <div id="tab-settings" class="tab-content" :class="{ active: activeTab === 'settings' }">
           <div class="settings-grid">
-            <div class="settings-section">
+            <div class="settings-section" v-if="currentOrigin === getApiBase()">
               <div class="section-title"><span>▸</span> {{ trans.appearance }}</div>
 
               <div class="form-row">
@@ -855,6 +855,8 @@ const getUsagePercent = (used, limit) => {
   if (!limit) return 0
   return Math.min(100, Number(((Number(used || 0) / Number(limit)) * 100).toFixed(2)))
 }
+
+const currentOrigin = computed(() => window.location.origin)
 
 const isLoggedIn = ref(false)
 const loginForm = ref({ username: '', password: '' })
