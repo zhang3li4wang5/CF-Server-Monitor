@@ -140,7 +140,7 @@ export const fetchServers = async () => {
 }
 
 export const fetchServersAll = async () => {
-  const results = await http.getAll('/api/servers', { includeAuth: false })
+  const results = await http.getAll('/api/servers')
   const mergedData = {
     servers: [],
     stats: { total: 0, online: 0, offline: 0, globalNetRx: 0, globalNetTx: 0, globalSpeedIn: 0, globalSpeedOut: 0 },
