@@ -2,7 +2,7 @@
 
 一个基于 Cloudflare Workers + D1 + Durable Objects 的多服务器监控探针系统，支持实时监控、历史数据查看、延迟追踪、地图展示等功能。兼容主流Linux系统，Alpine Linux，OpenWrt，Windows系统。**演示地址**：<https://tz.dashdeep.dpdns.org/>
 
-**当前版本：V2.7.6**
+**当前版本：V2.7.7**
 
 <2.7.1 新增了功能，需要**升级安装脚本** 才能生效，否则无法获取丢包率
 ```
@@ -27,6 +27,7 @@ cat /etc/config/cf-probe/config.conf
 <details>
 <summary>更新记录</summary>
 
+- V2.7.7 添加GitHub Page部署支持，添加飞书，Bark通知支持
 - V2.7.6 添加多站点支持包括验证码登录等，添加Windows PowerShell无依赖安装脚本，一些安全优化
 - V2.7.5 DO WebSocket改成 DO WebSocket Hibernation基本剔除DO Duration消耗，新增批量推送入口，每5秒批量接收多个服务器更新，减少 DO 请求次数。
 - V2.7.4 添加允许跨域配置，为后续版本额外功能做铺垫，前端加上跨域配置，修改成HASH模式，修改country为region，数据库自动维护
@@ -55,7 +56,7 @@ cat /etc/config/cf-probe/config.conf
 - 📊 **实时监控**：CPU、GPU、内存、磁盘、网络、进程数、连接数、负载均衡
 - 📈 **历史图表**：支持7天历史数据查看
 - 🌍 **全球地图**：可视化展示服务器分布
-- 🔔 **离线告警**：支持 Telegram、企业微信 / 飞书 通知
+- 🔔 **离线告警**：支持 Telegram、企业微信 / 飞书 / Bark 通知
 - 📱 **响应式**：支持桌面端和移动端
 - 🔄 **自动部署**：GitHub Actions 一键部署
 - 🗺️ **网络质量追踪**：国内电信/联通/移动/字节延迟与丢包率监测
@@ -519,6 +520,14 @@ Windows 系统（Python 版）
 1. 创建群机器人，获取 Webhook URL
 2. 填入 Bot Token 字段
 3. Chat ID 留空
+
+**Bark 告警：**
+
+1. 获取 Bark 推送链接，比如 `https://api.day.app/xxxxxxx/这里改成你自己的推送内容` 删掉中文，保留 `https://api.day.app/xxxxxxx/`
+2. 填入 Bot Token 字段
+3. Chat ID 留空
+
+
 
 </details>
 

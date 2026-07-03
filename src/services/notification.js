@@ -59,6 +59,20 @@ export async function sendNotification(settings, msg) {
     } catch (e) {
       return "飞书机器人通知发送失败: " + e.message;
     }
+  }else if(settings.tg_bot_token.includes("https://api.day.app/")) {
+    try {
+      await fetchWithRetry(settings.tg_bot_token, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: "💌 Cloudflare Server Monitor",
+          body: msg.replace(/\*\*/g, ""),
+          group: "您的分组名"
+        })
+      });
+    } catch (e) {
+      return "企业微信通知发送失败: " + e.message;
+    }
   }else{
     try {
       await fetchWithRetry(settings.tg_bot_token, {
