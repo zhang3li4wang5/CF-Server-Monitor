@@ -503,7 +503,7 @@ export async function getLatestMetrics(db, serverId, server = null) {
         WHERE server_id = ?
         ORDER BY timestamp DESC
         LIMIT 1
-      `).bind(startId, endId, serverId).first()
+      `).bind(serverId).first()
       : await db.prepare(`
         SELECT * FROM metrics_history
         WHERE id >= ?
